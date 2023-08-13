@@ -753,48 +753,48 @@ impl Piece {
                         Some(other) if other.color == opponent => moves.push(Move::Take(pos, pos)),
                         _ => {}
                     };
+                }
 
-                    let castling = match self.color {
-                        PlayerColor::Black => board.castling_black,
-                        PlayerColor::White => board.castling_white,
-                    };
+                let castling = match self.color {
+                    PlayerColor::Black => board.castling_black,
+                    PlayerColor::White => board.castling_white,
+                };
 
-                    let mut castles = vec![];
-                    if castling.short_side_available {
-                        castles.push(CastleType::Short)
-                    }
-                    if castling.long_side_available {
-                        castles.push(CastleType::Long)
-                    }
+                let mut castles = vec![];
+                if castling.short_side_available {
+                    castles.push(CastleType::Short)
+                }
+                if castling.long_side_available {
+                    castles.push(CastleType::Long)
+                }
 
-                    for castle in castles {
-                        let CastlingMovement {
-                            rook_start,
-                            king_start,
-                            ..
-                        } = castle.positions(self.color);
-                        let mut legal = true;
-                        let start = min(rook_start.0, king_start.0);
-                        let end = max(rook_start.0, king_start.0);
-                        for x in start..=end {
-                            let test_position = Position(x, rook_start.1);
+                for castle in castles {
+                    let CastlingMovement {
+                        rook_start,
+                        king_start,
+                        ..
+                    } = castle.positions(self.color);
+                    let mut legal = true;
+                    let start = min(rook_start.0, king_start.0);
+                    let end = max(rook_start.0, king_start.0);
+                    for x in start..=end {
+                        let test_position = Position(x, rook_start.1);
 
-                            if x != start && x != end {
-                                if let Some(_) = board.piece_at(test_position) {
-                                    legal = false;
-                                    break;
-                                }
-                            }
-
-                            if board.position_is_attacked_by(test_position, opponent) {
+                        if x != start && x != end {
+                            if let Some(_) = board.piece_at(test_position) {
                                 legal = false;
                                 break;
                             }
                         }
 
-                        if legal {
-                            moves.push(Move::Castle(castle))
+                        if board.position_is_attacked_by(test_position, opponent) {
+                            legal = false;
+                            break;
                         }
+                    }
+
+                    if legal {
+                        moves.push(Move::Castle(castle))
                     }
                 }
             }
