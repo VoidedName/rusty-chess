@@ -92,20 +92,19 @@ fn main() -> Result<(), String> {
                     y,
                     mouse_btn: MouseButton::Left,
                     ..
-                } => {
-                    match game_state.interaction() {
-                        Some(Interaction::PickingPromotion(_, _, choices)) => {
-                            if let Some(piece) = promotion_ui.mouse_is_over(x, y, choices) {
-                                game_state = game_state.interact(Interaction::PickedPromotion(piece));
-                            }
-                        }
-                        _ => {
-                            if let Some(position) = board_ui.mouse_is_over(x, y) {
-                                game_state = game_state.interact(Interaction::StartMovingPiece(position));
-                            }
+                } => match game_state.interaction() {
+                    Some(Interaction::PickingPromotion(_, _, choices)) => {
+                        if let Some(piece) = promotion_ui.mouse_is_over(x, y, choices) {
+                            game_state = game_state.interact(Interaction::PickedPromotion(piece));
                         }
                     }
-                }
+                    _ => {
+                        if let Some(position) = board_ui.mouse_is_over(x, y) {
+                            game_state =
+                                game_state.interact(Interaction::StartMovingPiece(position));
+                        }
+                    }
+                },
                 Event::MouseButtonUp {
                     x,
                     y,

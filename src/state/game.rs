@@ -239,12 +239,15 @@ impl GameState {
                 Some(Interaction::StartMovingPiece(from)) if from != onto => {
                     if let Some(piece) = self.board[from.idx()] {
                         let moves = piece.moves(*from, &self);
-                        let moves = moves.iter().filter(|m| match m {
-                            Move::Move(p) => p == onto,
-                            Move::Take(p, _) => p == onto,
-                            Move::Promote(p, _) => p == onto,
-                            Move::Castle(side) => side.positions(player).king_end == *onto,
-                        }).collect::<Vec<_>>();
+                        let moves = moves
+                            .iter()
+                            .filter(|m| match m {
+                                Move::Move(p) => p == onto,
+                                Move::Take(p, _) => p == onto,
+                                Move::Promote(p, _) => p == onto,
+                                Move::Castle(side) => side.positions(player).king_end == *onto,
+                            })
+                            .collect::<Vec<_>>();
 
                         if moves.len() <= 1 {
                             if let Some(m) = moves.get(0) {
@@ -256,15 +259,19 @@ impl GameState {
                                 self
                             }
                         } else {
-                            let promotions = moves.iter().filter_map(|m| {
-                                if let Move::Promote(_, piece) = m {
-                                    Some(*piece)
-                                } else {
-                                    None
-                                }
-                            }).collect();
+                            let promotions = moves
+                                .iter()
+                                .filter_map(|m| {
+                                    if let Move::Promote(_, piece) = m {
+                                        Some(*piece)
+                                    } else {
+                                        None
+                                    }
+                                })
+                                .collect();
 
-                            self.interaction = Some(Interaction::PickingPromotion(*from, *onto, promotions));
+                            self.interaction =
+                                Some(Interaction::PickingPromotion(*from, *onto, promotions));
                             self
                         }
                     } else {
