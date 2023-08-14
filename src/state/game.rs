@@ -15,7 +15,7 @@ pub enum PlayerColor {
 }
 
 impl PlayerColor {
-    pub fn oppnent(&self) -> PlayerColor {
+    pub fn opponent(&self) -> PlayerColor {
         match self {
             PlayerColor::Black => PlayerColor::White,
             PlayerColor::White => PlayerColor::Black,
@@ -447,7 +447,7 @@ impl GameState {
             }
         };
 
-        new.state = GamePhase::Turn(player.oppnent());
+        new.state = GamePhase::Turn(player.opponent());
         let mut counter: u8 = new.position_counter.get(&new.board).map_or(0, |x| *x);
         counter += 1;
         new.position_counter.insert(new.board.clone(), counter);
@@ -610,7 +610,7 @@ impl Piece {
     pub fn moves(&self, position: Position, board: &GameState) -> Vec<Move> {
         let mut local_board = board.clone();
         let mut moves = vec![];
-        let opponent = self.color.oppnent();
+        let opponent = self.color.opponent();
         let king_position = match self.color {
             PlayerColor::Black => board.black_king,
             PlayerColor::White => board.white_king,
